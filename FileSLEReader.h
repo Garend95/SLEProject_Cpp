@@ -13,6 +13,6 @@ private:
 	string _sleInputFilePath;
 public:
 	FileSLEReader(string sleInputFilePath);
-	vector< vector<Fraction>> ReadSLEAugmentedMatrix();
+	vector< SLEContainer> ReadSLEAugmentedMatrices();
 };
 

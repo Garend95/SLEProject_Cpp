@@ -2,12 +2,13 @@
 #include <string>
 #include <vector>
 #include "Fraction.h"
+#include "SLEContainer.h"
 
 using namespace std;
 
 class SLEReaderBase
 {
 public:
-	virtual vector< vector<Fraction>> ReadSLEAugmentedMatrix() = 0;
+	virtual vector< SLEContainer> ReadSLEAugmentedMatrices() = 0;
 	virtual ~SLEReaderBase() {}
 };

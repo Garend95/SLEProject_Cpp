@@ -7,51 +7,77 @@ FileSLEReader::FileSLEReader(string sleInputFilePath)
 	_sleInputFilePath = sleInputFilePath;
 }
 
-vector< vector<Fraction>> FileSLEReader::ReadSLEAugmentedMatrix()
+vector< SLEContainer> FileSLEReader::ReadSLEAugmentedMatrices()
 {
 	ifstream inputFileStream(_sleInputFilePath);
 	if (!inputFileStream.is_open())
 	{
 		throw exception("Cannot open input file!");
 	}
-	vector< vector<Fraction>> augmentedMatrix;
+	bool allSLEsRead = false;
+	vector< SLEContainer> sleContainers;
+	vector< vector<Fraction>> fractionList;
 	int lastFoundColumnCount = 0;
-	string currentLine;
-	while (getline(inputFileStream, currentLine))
+	while (!allSLEsRead)
 	{
-		currentLine += ' ';
-		string currentFractionString;
-		int currentRowFractionCount = 0;
-		vector<Fraction> currentFractionRow;
-		for (int i = 0; i < currentLine.length(); i++)
+		string currentLine;
+		if (!getline(inputFileStream, currentLine))
 		{
-			if (currentLine[i] == ' ')
+			if (fractionList.size() > 0)
 			{
-				currentRowFractionCount++;
-				currentFractionRow.push_back(Fraction::ParseFraction(currentFractionString));
-				currentFractionString = "";
+				SLEContainer container(fractionList);
+				sleContainers.push_back(container);
 			}
-			else 
-			{
-				currentFractionString += currentLine[i];
-			}
+			allSLEsRead = true;
 		}
-		if (lastFoundColumnCount > 0)
+		else if (currentLine == "--")
 		{
-			if (currentRowFractionCount != lastFoundColumnCount)
+			if (fractionList.size() > 0)
 			{
-				throw exception("Invalid augmented matrix");
+				SLEContainer container(fractionList);
+				sleContainers.push_back(container);
 			}
+			fractionList.clear();
+			lastFoundColumnCount = 0;
 		}
-		else if (currentRowFractionCount < 2)
+		else
 		{
-			throw exception("Invalid augmented matrix");
-		}
-		else {
-			lastFoundColumnCount = currentRowFractionCount;
-		}
-		augmentedMatrix.push_back(currentFractionRow);
+			currentLine += ' ';
+			string currentFractionString;
+			int currentRowFractionCount = 0;
+			vector<Fraction> currentFractionRow;
+			for (int i = 0; i < currentLine.length(); i++)
+			{
+				if (currentLine[i] == ' ')
+				{
+					currentRowFractionCount++;
+					currentFractionRow.push_back(Fraction::ParseFraction(currentFractionString));
+					currentFractionString = "";
+				}
+				else
+				{
+					currentFractionString += currentLine[i];
+				}
+			}
+			if (lastFoundColumnCount > 0)
+			{
+				if (currentRowFractionCount != lastFoundColumnCount)
+				{
+					string currentMatrixNumberString = to_string(sleContainers.size() + 1);
+					throw exception(("Matrix #" + currentMatrixNumberString  + ": Invalid augmented matrix").c_str());
+				}
+			}
+			else if (currentRowFractionCount < 2)
+			{
+				string currentMatrixNumberString = to_string(sleContainers.size() + 1);
+				throw exception(("Matrix #" + currentMatrixNumberString + ": Invalid augmented matrix").c_str());
+			}
+			else {
+				lastFoundColumnCount = currentRowFractionCount;
+			}
+			fractionList.push_back(currentFractionRow);
+		}	
 	}
 	inputFileStream.close();
-	return augmentedMatrix;
+	return sleContainers;
 }

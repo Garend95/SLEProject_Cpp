@@ -11,11 +11,12 @@ FileSolutionWriter::FileSolutionWriter(std::string solutionFilePath)
 
 void FileSolutionWriter::StartWriting()
 {
-	_fileOutputStream->open(_solutionFilePath);
+	_fileOutputStream->open(_solutionFilePath, std::fstream::app);
 	if (!_fileOutputStream->is_open()) 
 	{
 		throw std::exception("Unable to open file");
 	}
+	(*_fileOutputStream) << std::endl;
 }
 
 void FileSolutionWriter::Write(std::string stringToWrite)
@@ -30,6 +31,7 @@ void FileSolutionWriter::WriteLine(std::string stringToWrite)
 
 void FileSolutionWriter::EndWriting()
 {
+	(*_fileOutputStream) << "--------------";
 	_fileOutputStream->close();
 }
 

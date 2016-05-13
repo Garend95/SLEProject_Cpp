@@ -29,10 +29,14 @@ int main(int argc, char* argv[])
 	if (!solutionWriter) {
 		solutionWriter = new ConsoleSolutionWriter();
 	}
-	try {
-		vector< vector<Fraction>> augmentedMatrix = sleReader->ReadSLEAugmentedMatrix();
+	try 
+	{
+		vector< SLEContainer> augmentedMatrices = sleReader->ReadSLEAugmentedMatrices();
 		SLESolver solver(solutionWriter);
-		solver.SolveByGaussJordanElimination(augmentedMatrix);
+		for (SLEContainer container : augmentedMatrices)
+		{
+			solver.SolveByGaussJordanElimination(container.GetSLE());
+		}
 	}
 	catch (exception& exc) {
 		cout << exc.what();

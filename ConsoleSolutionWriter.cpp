@@ -4,10 +4,14 @@
 
 
 void ConsoleSolutionWriter::StartWriting()
-{}
+{
+	std::cout << std::endl;
+}
 
 void ConsoleSolutionWriter::EndWriting()
-{}
+{
+	std::cout << "--------------";
+}
 
 void ConsoleSolutionWriter::Write(std::string stringToWrite)
 {

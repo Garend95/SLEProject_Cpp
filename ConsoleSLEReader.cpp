@@ -24,49 +24,63 @@ int ConsoleSLEReader::ReadIntegerInput(std::string errorMessage)
 	
 }
 
-vector< vector<Fraction>> ConsoleSLEReader::ReadSLEAugmentedMatrix()
+vector< SLEContainer> ConsoleSLEReader::ReadSLEAugmentedMatrices()
 {
-	int rowCount, columnCount;
-	cout << "Input the number of rows of the augmented matrix: ";
-	string nonIntegerRowErrorMessage = "Please input integer for the number of rows: ";
-	rowCount = ReadIntegerInput(nonIntegerRowErrorMessage);
-	while (rowCount <= 0)
+	int sleCount;
+	cout << "Input the number of systems if linear equations: ";
+	string nonIntegerSleCount = "Please input integer for the number of SLEs: ";
+	sleCount = ReadIntegerInput(nonIntegerSleCount);
+	while (sleCount <= 0)
 	{
-		cout << "The number of rows should be positive: ";
+		cout << "The number of sles should be positive: ";
+		sleCount = ReadIntegerInput(nonIntegerSleCount);
+	}
+	vector< SLEContainer> sleContainers;
+	for (int k = 0; k < sleCount; k++)
+	{
+		int rowCount, columnCount;
+		cout << "Input the number of rows of the augmented matrix: ";
+		string nonIntegerRowErrorMessage = "Please input integer for the number of rows: ";
 		rowCount = ReadIntegerInput(nonIntegerRowErrorMessage);
-	}
-	cout << "Input the number of columns of the augmented matrix: ";
-	string nonIntegerColumnErrorMessage = "Please input integer for the number of columns: ";
-	columnCount = ReadIntegerInput(nonIntegerColumnErrorMessage);
-	while (columnCount < 2)
-	{
-		cout << "The number of columns should be at least 2: ";
-		columnCount = ReadIntegerInput(nonIntegerColumnErrorMessage);
-	}
-	vector< vector<Fraction>> augmentedMatrix;
-	for (int i = 0; i < rowCount; i++)
-	{
-		vector< Fraction> currentRow;
-		for (int j = 0; j < columnCount; j++)
+		while (rowCount <= 0)
 		{
-			while (true)
+			cout << "The number of rows should be positive: ";
+			rowCount = ReadIntegerInput(nonIntegerRowErrorMessage);
+		}
+		cout << "Input the number of columns of the augmented matrix: ";
+		string nonIntegerColumnErrorMessage = "Please input integer for the number of columns: ";
+		columnCount = ReadIntegerInput(nonIntegerColumnErrorMessage);
+		while (columnCount < 2)
+		{
+			cout << "The number of columns should be at least 2: ";
+			columnCount = ReadIntegerInput(nonIntegerColumnErrorMessage);
+		}
+		vector< vector<Fraction>> augmentedMatrix;
+		for (int i = 0; i < rowCount; i++)
+		{
+			vector< Fraction> currentRow;
+			for (int j = 0; j < columnCount; j++)
 			{
-				try
+				while (true)
 				{
-					cout << "Input [" << (i + 1) << "][" << (j + 1) << "]: ";
-					string input;
-					getline(cin, input);
-					Fraction currentFraction = Fraction::ParseFraction(input);
-					currentRow.push_back(currentFraction);
-					break;
-				}
-				catch (exception& ex)
-				{
-					cout << "Invalid fraction!";
+					try
+					{
+						cout << "Input [" << (i + 1) << "][" << (j + 1) << "]: ";
+						string input;
+						getline(cin, input);
+						Fraction currentFraction = Fraction::ParseFraction(input);
+						currentRow.push_back(currentFraction);
+						break;
+					}
+					catch (exception& ex)
+					{
+						cout << "Invalid fraction!";
+					}
 				}
 			}
+			augmentedMatrix.push_back(currentRow);
 		}
-		augmentedMatrix.push_back(currentRow);
+		sleContainers.push_back(augmentedMatrix);
 	}
-	return augmentedMatrix;
+	return sleContainers;
 }
